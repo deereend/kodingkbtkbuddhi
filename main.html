@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koding KB-TK Perguruan Buddhi</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('background.jpg');
+            background-size: contain;
+            
+            
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding:10px;
+            
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+                
+        .header-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .info-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .container {
+            display: flex;
+            padding: 10px;
+            height: 90vh;
+        }
+        
+        .blocks-panel {
+            width: 25%;
+            background-color: #e6f7ffb4;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .category-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .workspace {
+            width: 50%;
+            background-color: #e6f7ffb4;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+            
+        }
+        
+        .code-area {
+            width: 25%;
+            background-color: #e6f7ffb4;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .category {
+            margin-bottom: 15px;
+            background-color: #ffffffdc;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .category-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+            position: sticky;
+            top: 0;
+            background-color: #ffffffdc;
+            padding: 5px 0;
+            z-index: 1;
+        }
+        
+        /* Gaya Blok Coding yang Diubah menjadi Persegi */
+        .block {
+            position: relative;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: move;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            border-left: 8px solid #388E3C;
+        }
+        
+        .block.bergerak { 
+            background-color: #4CAF50;
+            border-left-color: #388E3C;
+        }
+        
+        .block.interaksi { 
+            background-color: #2196F3;
+            border-left-color: #1976D2;
+        }
+        
+        .block.kondisi { 
+            background-color: #9C27B0;
+            border-left-color: #7B1FA2;
+        }
+        
+        .block.logika {
+            background-color: #FF9800;
+            border-left-color: #F57C00;
+        }
+        
+        .block-start {
+            border-radius: 8px 8px 0 0;
+            padding: 15px;
+            background-color: #607D8B;
+            border-left: none;
+        }
+        
+        .block-end {
+            border-radius: 0 0 8px 8px;
+            padding: 15px;
+            background-color: #607D8B;
+            border-left: none;
+        }
+        
+        .block-icon {
+            font-size: 35px;
+            margin-right: 10px;
+        }
+        
+        .block-input {
+            background-color: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 3px;
+            padding: 5px;
+            color: white;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            width: 100px;
+            font-size: 16px;
+        }
+        
+        .block-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .block-select {
+            background-color: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 3px;
+            padding: 5px;
+            color: rgb(32, 31, 31);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 16px;
+        }
+        
+        .character {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            cursor: grab;
+            user-select: none;
+            touch-action: none; /* Untuk touch devices */
+            transition: all 0.3s ease;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            will-change: transform; /* Optimasi performa */
+        }
+        
+        .character:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(0,0,0,0.3));
+}
+
+/* Untuk touch devices */
+@media (hover: none) {
+    .character {
+        cursor: pointer;
+    }
+}
+
+        
+.character.dragging {
+    transition: none;
+    transform: none;
+    z-index: 100;
+}
+
+
+        .character:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .delete-character {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 20;
+        }
+        
+        .character:hover .delete-character {
+            opacity: 1;
+        }
+        
+        #playground {
+            width: 100%;
+            height: 100%;
+            background-image: url('paper.jpg');
+            background-size:cover;
+            position: relative;
+            border-radius: 8px;
+        }
+        
+        .code-container {
+            flex-grow: 1;
+            background-color: #ffffffdc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background-size: 100px;
+            background-repeat: no-repeat;
+            background-position: right bottom;
+            background-blend-mode: overlay;
+            background-color: rgba(255, 255, 255, 0.8);
+
+            
+        }
+        
+        .code-block {
+            position: relative;
+            background-color: #2ccca758;
+            padding: 15px;
+            margin: 0;
+            border-radius: 8px;
+            border-left: 8px solid #2e1212;
+            
+            display: flex;
+            align-items: center;
+        }
+        
+        .code-block.bergerak { 
+            border-left-color: #388E3C;
+        }
+        
+        .code-block.interaksi { 
+            border-left-color: #1976D2;
+        }
+        
+        .code-block.kondisi { 
+            border-left-color: #7B1FA2;
+        }
+        
+        .code-block.logika {
+            border-left-color: #F57C00;
+        }
+        
+        .code-block-start {
+            border-radius: 8px 8px 0 0;
+            padding: 15px;
+            background-color: #e7fb4fc3;
+            border-left: none;
+            
+            
+        }
+        
+        .code-block-end {
+            border-radius: 0 0 8px 8px;
+            padding: 15px;
+            background-color: #e7fb4fc3;
+            border-left: none;
+        }
+        
+        .code-icon {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .delete-block {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #f44336;
+            cursor: pointer;
+            font-size: 16px;
+            background: white;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        #playBtn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        #stopBtn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        #clearBtn {
+            background-color: #FF9800;
+            color: white;
+        }
+        
+        .character-selector {
+            margin-bottom: 15px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .character-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px; /* Tambahkan jarak antara opsi */
+            padding: 8px;
+        }
+        
+        .character-option {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: all 0.2s ease;
+        }
+        
+        .character-option:hover {
+            border-color: #2196F3;
+            transform: scale(1.1);
+        }
+        
+        .character-option.selected {
+            border-color: #4CAF50;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        
+        .background-selector {
+            margin-top: 10px;
+        }
+        
+        #backgroundSelect {
+            width: 100%;
+            padding: 5px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            background-color: white;
+            border-radius: 10px;
+            padding: 5px 10px;
+            font-size: 12px;
+            max-width: 120px;
+            word-wrap: break-word;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 15;
+        }
+        
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent transparent;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe99;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: modalopen 0.5s;
+        }
+        
+        .creator-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .creator-info img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        
+        /* Conditional block styles */
+        .if-then-else-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 5px;
+            padding-left: 20px;
+            border-left: 3px dashed #FF9800;
+            min-height: 30px;
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+        
+        .if-then-else-label {
+            font-weight: bold;
+            color: #FF9800;
+            margin-top: 5px;
+        }
+        
+        .drop-zone {
+            min-height: 30px;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 2px 0;
+        }
+        
+        .drop-zone.highlight {
+            background-color: rgba(255, 152, 0, 0.3);
+        }
+
+
+        .logo {
+            height: 60px;
+            margin-left: 20px;
+            
+        }
+
+        .logo img {
+            height: 150%;
+            object-fit: contain;
+            
+        }
+
+
+
+
+ 
+
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="LogoBuddhi.png" alt="Logo" style="height: 80px;">
+        </div>
+       
+                
+        
+        <div class="header-controls">
+            <button class="header-btn" id="saveBtn">
+                <span>💾</span> Simpan
+            </button>
+            <button class="header-btn" id="loadBtn">
+                <span>📂</span> Buka
+            </button>
+            <button class="header-btn" id="fullscreenBtn">
+                <span>⛶</span> Fullscreen
+            </button>
+            <button class="info-btn" id="infoBtn">ℹ</button>
+</div>
+
+        
+    
+    </div>
+    
+    <!-- Modal Info -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Informasi Aplikasi</h2>
+            <p>Aplikasi pemrograman blok koding ini diperuntukan siswa-siswi KB-TK, khususnya KB-TK Perguruan Buddhi dengan bentuk blok yang saling terkait seperti puzzle. Tujuan aplikasi koding ini adalah mengasah logika siswa-siswi TK dan mengenalkan teknologi sejak dini.</p>
+            
+            <div class="creator-info">
+                <p><h6>Pengembang Aplikasi:</h6></p>
+                <p><h5>Dram Renaldi,S.Kom., M.Kom.</h5></p>
+                <p><h6>Dosen Teknik Perangkat Lunak - Fakultas Sains dan Teknologi - Universitas Buddhi Dharma</h6></p>
+                <p><h6>Versi: 1.0.0</h6></p>
+                <p><h6>&copy; 2025 All Rights Reserved</h6></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="blocks-panel">
+            <div class="category-container">
+                <div class="category">
+                    <div class="category-title">🏃 Bergerak</div>
+                    <div class="block bergerak" draggable="true" data-type="naik">
+                        <span class="block-icon">⬆️</span> Naik <input type="number" class="block-input" value="1" min="1" max="10" placeholder="langkah">
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="turun">
+                        <span class="block-icon">⬇️</span> Turun <input type="number" class="block-input" value="1" min="1" max="10" placeholder="langkah">
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="kiri">
+                        <span class="block-icon">⬅️</span> Kiri <input type="number" class="block-input" value="1" min="1" max="10" placeholder="langkah">
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="kanan">
+                        <span class="block-icon">➡️</span> Kanan <input type="number" class="block-input" value="1" min="1" max="10" placeholder="langkah">
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="berputar">
+                        <span class="block-icon">🔄</span> Berputar <input type="number" class="block-input" value="90" min="0" max="360" placeholder="derajat">
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="belok-kanan">
+                        <span class="block-icon">↪️</span> Belok kanan
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="belok-kiri">
+                        <span class="block-icon">↩️</span> Belok kiri
+                    </div>
+                    <div class="block bergerak" draggable="true" data-type="lompat">
+                        <span class="block-icon">↕️</span> Lompat
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <div class="category-title">💬 Interaksi</div>
+                    <div class="block interaksi" draggable="true" data-type="suara">
+                        <span class="block-icon">🔊</span> Mainkan suara 
+                        <select class="block-select">
+                            <option value="kucing">Suara Kucing</option>
+                            <option value="anjing">Suara Anjing</option>
+                            <option value="burung_hantu">Suara Burung Hantu</option>
+                            <option value="gajah">Suara Gajah</option>
+                            <option value="domba">Suara Domba</option>
+                            <option value="kodok">Suara Kodok</option>
+                            <option value="bebek">Suara Bebek</option>
+                            <option value="monyet">Suara Monyet</option>
+                            <option value="tikus">Suara Tikus</option>
+                            <option value="harimau">Suara Harimau</option>
+                            <option value="tertawa">Tertawa</option>
+                        </select>
+                    </div>
+                    <div class="block interaksi" draggable="true" data-type="bicara">
+                        <span class="block-icon">💬</span> Katakan 
+                        <input type="text" class="block-input" placeholder="Teks" value="Halo!">
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <div class="category-title">🤔 Kondisi</div>
+                    <div class="block kondisi" draggable="true" data-type="besar">
+                        <span class="block-icon">➕</span> Besar
+                    </div>
+                    <div class="block kondisi" draggable="true" data-type="kecil">
+                        <span class="block-icon">➖</span> Kecil
+                    </div>
+                    <div class="block kondisi" draggable="true" data-type="hilang">
+                        <span class="block-icon">🚫</span> Hilang
+                    </div>
+                    <div class="block kondisi" draggable="true" data-type="muncul">
+                        <span class="block-icon">✨</span> Muncul
+                    </div>
+                </div>
+                
+                <div class="category">
+                    <div class="category-title">❓ Logika</div>
+                    <div class="block logika" draggable="true" data-type="if-then-else">
+                        <span class="block-icon">❓</span> Jika bertemu karakter lain
+                        <div class="if-then-else-label">Maka:</div>
+                        <div class="if-then-else-container drop-zone" data-section="then">
+                            <!-- Then blocks will be added here -->
+                        </div>
+                        <div class="if-then-else-label">Jika tidak:</div>
+                        <div class="if-then-else-container drop-zone" data-section="else">
+                            <!-- Else blocks will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="background-selector">
+                <div class="category-title">🌄 Background</div>
+                <select id="backgroundSelect">
+                    <option value="1">Latar</option>
+                    <option value="2">Taman</option>
+                    <option value="3">Pantai</option>
+                    <option value="4">Jalan</option>
+                    <option value="5">Rumah</option>
+                    <option value="6">Sekolah</option>
+
+                </select>
+            </div>
+        </div>
+        
+        <div class="workspace">
+            <div id="playground"></div>
+        </div>
+        
+        <div class="code-area">
+            <div class="character-selector">
+                <div class="category-title">Pilihan Karakter</div>
+                <div class="character-options" id="characterOptions">
+                    <div class="character-option selected" data-character="1" style="background-image: url('cat.png')" title="Kucing"></div>
+                    <div class="character-option" data-character="2" style="background-image: url('dog.png')" title="Anjing"></div>
+                    <div class="character-option" data-character="3" style="background-image: url('duck.png')" title="Bebek"></div>
+                    <div class="character-option" data-character="4" style="background-image: url('elephant.png')" title="Gajah"></div>
+                    <div class="character-option" data-character="5" style="background-image: url('frog.png')" title="Kodok"></div>
+                    <div class="character-option" data-character="6" style="background-image: url('monkey.png')" title="Monyet"></div>
+                    <div class="character-option" data-character="7" style="background-image: url('mouse.png')" title="Tikus"></div>
+                    <div class="character-option" data-character="8" style="background-image: url('owl.png')" title="Burung Hantu"></div>
+                    <div class="character-option" data-character="9" style="background-image: url('sheep.png')" title="Domba"></div>
+                    <div class="character-option" data-character="10" style="background-image: url('tiger.png')" title="Harimau"></div>
+                </div>
+                
+            </div>
+            
+            <div class="category-title">💻Blok Program</div>
+            <div class="code-container" id="codeContainer">
+                <p>Pilih karakter untuk melihat/menambahkan blok program</p>
+            </div>
+            
+            <div class="controls">
+                <button id="playBtn">▶ Play Semua</button>
+                <button id="stopBtn">⏹ Stop</button>
+                <button id="clearBtn">⤫ Hapus Semua</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables
+            let selectedCharacter = '1';
+            let characters = [];
+            let draggedBlock = null;
+            let currentCharacterCode = null;
+            let isPlaying = false;
+            let currentExecution = null;
+            let characterInitialPositions = {}; // To store initial positions
+            
+            // Sound effects
+            const sounds = {
+                kucing: 'cat.mp3',
+                anjing: 'dog.mp3',
+                burung_hantu: 'owl.mp3',
+                bebek: 'duck.mp3',
+                gajah: 'elephant.mp3',
+                tikus: 'mouse.mp3',
+                monyet: 'monkey.mp3',
+                dommba: 'sheep.mp3',
+                harimau: 'tiger.mp3',
+                kodok:'frog.mp3',
+                tertawa: 'https://www.myinstants.com/media/sounds/kids-laughing.mp3'
+            };
+            
+            // Background images
+            const backgrounds = {
+                '1': 'paper.jpg', // latar
+                '2': 'taman.jpg', // taman
+                '3': 'pantai.jpg', // pantai
+                '4': 'jalan.jpg',  // jalan
+                '5': 'rumah.jpg',  // rumah
+                '6': 'kelas.jpg'  // sekolah
+
+
+            };
+            
+            // Default character images
+            const defaultCharacters = {
+                '1': { 
+                    name: 'Kucing',
+                    image: 'cat.png'
+                },
+                '2': { 
+                    name: 'Anjing',
+                    image: 'dog.png'
+                },
+                '3': { 
+                    name: 'Bebek',
+                    image: 'duck.png'
+                },
+                '4': { 
+                    name: 'Gajah',
+                    image: 'elephant.png'
+                },
+                '5': { 
+                    name: 'Kodok',
+                    image: 'frog.png'
+                },
+                '6': { 
+                    name: 'Monyet',
+                    image: 'monkey.png'
+                },
+                '7': { 
+                    name: 'Tikus',
+                    image: 'mouse.png'
+                },
+                '8': { 
+                    name: 'Burung Hantu',
+                    image: 'owl.png'
+                },
+                '9': { 
+                    name: 'Domba',
+                    image: 'sheep.png'
+                },
+                '10': { 
+                    name: 'Harimau',
+                    image: 'tiger.png'
+                }
+
+            };
+            
+            // Character code containers (stores code for each character)
+            const characterCodes = {};
+            
+            // Initialize audio
+            const audio = new Audio();
+            
+            // Modal functionality
+            const modal = document.getElementById("infoModal");
+            const btn = document.getElementById("infoBtn");
+            const span = document.getElementsByClassName("close")[0];
+            
+            btn.onclick = function() {
+                modal.style.display = "block";
+            }
+            
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+            
+            // Initialize the app
+            function initApp() {
+    // Load background from localStorage
+    const savedBg = localStorage.getItem('selectedBackground');
+    if (savedBg) {
+        document.getElementById('backgroundSelect').value = savedBg;
+        changeBackground(savedBg);
+    }
+    
+    // Initialize buttons
+    document.getElementById('saveBtn').addEventListener('click', saveProject);
+    document.getElementById('loadBtn').addEventListener('click', loadProject);
+}
+
+
+// Save project to file
+document.getElementById('saveBtn').addEventListener('click', function() {
+    if (!confirm('Simpan proyek ini ke komputer Anda?')) return;
+    
+    // Prepare data to save
+    const projectData = {
+        characters: characters.map(char => ({
+            id: char.id,
+            type: char.getAttribute('data-character'),
+            top: char.style.top,
+            left: char.style.left,
+            code: characterCodes[char.id] || null
+        })),
+        background: document.getElementById('backgroundSelect').value,
+        version: '1.0.0'
+    };
+    
+    // Create JSON file
+    const dataStr = JSON.stringify(projectData);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    // Create download link
+    const exportName = 'coding-tkbuddhi.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportName);
+    linkElement.click();
+});
+
+// Load project from file
+document.getElementById('loadBtn').addEventListener('click', function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                const projectData = JSON.parse(event.target.result);
+                
+                // Clear existing characters
+                const playground = document.getElementById('playground');
+                playground.innerHTML = '';
+                characters = [];
+                
+                // Load background
+                if (projectData.background) {
+                    document.getElementById('backgroundSelect').value = projectData.background;
+                    changeBackground(projectData.background);
+                }
+                
+                // Load characters
+                if (projectData.characters && projectData.characters.length > 0) {
+                    projectData.characters.forEach(charData => {
+                        // Create character element
+                        const charType = charData.type || '1';
+                        const charInfo = defaultCharacters[charType] || defaultCharacters['1'];
+                        
+                        const character = document.createElement('div');
+                        character.className = 'character';
+                        character.id = charData.id;
+                        character.setAttribute('data-character', charType);
+                        character.style.backgroundImage = `url('${charInfo.image}')`;
+                        character.title = charInfo.name;
+                        character.style.top = charData.top || '50%';
+                        character.style.left = charData.left || '50%';
+                        
+                        // Add delete button
+                        const deleteBtn = document.createElement('div');
+                        deleteBtn.className = 'delete-character';
+                        deleteBtn.innerHTML = '×';
+                        deleteBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            character.remove();
+                           
+                        });
+                        character.appendChild(deleteBtn);
+                        
+                        // Make draggable
+                        makeDraggable(character);
+                        
+                        // Click to show code
+                        character.addEventListener('click', function() {
+                            showCharacterCode(this.id);
+                        });
+                        
+                        playground.appendChild(character);
+                        characters.push(character);
+                        
+                        // Store initial position
+                        characterInitialPositions[character.id] = {
+                            top: charData.top || '50%',
+                            left: charData.left || '50%'
+                        };
+                        
+                        // Load character code
+                        if (charData.code) {
+                            characterCodes[character.id] = charData.code;
+                        }
+                    });
+                    
+                    alert('Proyek berhasil dimuat!');
+                }
+            } catch (error) {
+                console.error('Error loading project:', error);
+                alert('Gagal memuat proyek. File mungkin rusak.');
+            }
+        };
+        
+        reader.readAsText(file);
+    };
+    
+    input.click();
+});
+
+
+
+
+
+            
+            // Character selection
+            function selectCharacter(e) {
+    const characterId = this.getAttribute('data-character');
+    selectedCharacter = characterId;
+    
+    // Update UI
+    document.querySelectorAll('.character-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    this.classList.add('selected');
+    
+    // Langsung tambahkan karakter baru ke playground
+    addCharacterToPlayground(characterId);
+}
+
+function addCharacterToPlayground(characterId) {
+    const playground = document.getElementById('playground');
+    const charData = defaultCharacters[characterId];
+    
+    if (!charData) return;
+    
+    const newCharId = 'char-' + Date.now();
+    const character = document.createElement('div');
+    character.className = 'character';
+    character.id = newCharId;
+    character.setAttribute('data-character', characterId);
+    character.style.backgroundImage = `url('${charData.image}')`;
+    character.title = charData.name;
+    
+    // Posisi random di playground (30-70% area)
+    character.style.left = (30 + Math.random() * 40) + '%';
+    character.style.top = (30 + Math.random() * 40) + '%';
+    
+    // Delete button
+    const deleteBtn = document.createElement('div');
+    deleteBtn.className = 'delete-character';
+    deleteBtn.innerHTML = '×';
+    deleteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        character.remove();
+
+    });
+    character.appendChild(deleteBtn);
+    
+    // Make draggable
+    makeDraggable(character);
+    
+    // Click to show code
+    character.addEventListener('click', function() {
+        showCharacterCode(this.id);
+    });
+    
+    playground.appendChild(character);
+    characters.push(character);
+    
+    // Initialize code container
+    characterCodes[newCharId] = {
+        characterType: characterId,
+        characterName: charData.name,
+        blocks: []
+    };
+    
+    // Show code for this character
+    showCharacterCode(newCharId);
+    // Also update the selected character in the options
+    document.querySelectorAll('.character-option').forEach(opt => {
+        opt.classList.remove('selected');
+        if (opt.getAttribute('data-character') === characterId) {
+            opt.classList.add('selected');
+        }
+    });
+    
+}
+            
+            
+            
+            // Show code for a specific character
+function showCharacterCode(characterId) {
+    currentCharacterCode = characterId;
+    const codeContainer = document.getElementById('codeContainer');
+    
+    // Set character image as background
+    const charElement = document.getElementById(characterId);
+    if (charElement) {
+        const charType = charElement.getAttribute('data-character');
+        const charData = defaultCharacters[charType];
+        if (charData) {
+            codeContainer.style.backgroundImage = `url('${charData.image}')`;
+        }
+    }
+    
+    updateCharacterCodeDisplay();
+}
+            
+            // Update the code display for a character
+            function updateCharacterCodeDisplay() {
+                const codeContainer = document.getElementById('codeContainer');
+                
+                if (!currentCharacterCode) {
+                    codeContainer.innerHTML = '<p>Pilih karakter untuk melihat/menambahkan blok program</p>';
+                    return;
+                }
+                
+                if (!characterCodes[currentCharacterCode]) {
+                    const charType = currentCharacterCode.split('-')[0] === 'char' ? 
+                        selectedCharacter : currentCharacterCode;
+                    const charData = defaultCharacters[charType];
+                    
+                    characterCodes[currentCharacterCode] = {
+                        characterType: charType,
+                        characterName: charData?.name || 'Karakter',
+                        blocks: []
+                    };
+                }
+                
+                codeContainer.innerHTML = '';
+                
+                // Add start block
+                const startBlock = document.createElement('div');
+                startBlock.className = 'code-block-start';
+                startBlock.innerHTML = 'Mulai';
+                codeContainer.appendChild(startBlock);
+                
+                // Add code blocks
+                characterCodes[currentCharacterCode].blocks.forEach((block, index) => {
+                    const blockElement = createCodeBlockElement(block, index);
+                    codeContainer.appendChild(blockElement);
+                });
+                
+                // Add end block
+                const endBlock = document.createElement('div');
+                endBlock.className = 'code-block-end';
+                endBlock.innerHTML = 'Selesai';
+                codeContainer.appendChild(endBlock);
+            }
+            
+            // Create a code block element
+            function createCodeBlockElement(blockData, index) {
+                const blockElement = document.createElement('div');
+                blockElement.className = `code-block ${blockData.type}`;
+                blockElement.setAttribute('data-type', blockData.type);
+                blockElement.setAttribute('data-index', index);
+                
+                // Create block content based on type
+                let content = '';
+                let icon = '';
+                switch(blockData.type) {
+                    case 'naik':
+                        icon = '⬆️';
+                        content = `Naik ${blockData.steps} langkah`;
+                        break;
+                    case 'turun':
+                        icon = '⬇️';
+                        content = `Turun ${blockData.steps} langkah`;
+                        break;
+                    case 'kiri':
+                        icon = '⬅️';
+                        content = `Kiri ${blockData.steps} langkah`;
+                        break;
+                    case 'kanan':
+                        icon = '➡️';
+                        content = `Kanan ${blockData.steps} langkah`;
+                        break;
+                    case 'berputar':
+                        icon = '🔄';
+                        content = `Berputar ${blockData.degrees} derajat`;
+                        break;
+                    case 'belok-kanan':
+                        icon = '↪️';
+                        content = `Belok kanan`;
+                        break;
+                    case 'belok-kiri':
+                        icon = '↩️';
+                        content = `Belok kiri`;
+                        break;
+                    case 'lompat':
+                        icon = '↕️';
+                        content = `Lompat`;
+                        break;
+                    case 'suara':
+                        icon = '🔊';
+                        content = `Mainkan suara ${blockData.sound}`;
+                        break;
+                    case 'bicara':
+                        icon = '💬';
+                        content = `Katakan "${blockData.text}"`;
+                        break;
+                    case 'besar':
+                        icon = '➕';
+                        content = `Besar`;
+                        break;
+                    case 'kecil':
+                        icon = '➖';
+                        content = `Kecil`;
+                        break;
+                    case 'hilang':
+                        icon = '🚫';
+                        content = `Hilang`;
+                        break;
+                    case 'muncul':
+                        icon = '✨';
+                        content = `Muncul`;
+                        break;
+                    case 'if-then-else':
+                        icon = '❓';
+                        content = `Jika bertemu karakter lain`;
+                        
+                        // Create container for the if-then-else structure
+                        const container = document.createElement('div');
+                        container.style.display = 'flex';
+                        container.style.flexDirection = 'column';
+                        container.style.gap = '5px';
+                        
+                        // Add icon and main content
+                        const mainContent = document.createElement('div');
+                        mainContent.style.display = 'flex';
+                        mainContent.style.alignItems = 'center';
+                        
+                        const iconSpan = document.createElement('span');
+                        iconSpan.className = 'code-icon';
+                        iconSpan.textContent = icon;
+                        
+                        const contentSpan = document.createElement('span');
+                        contentSpan.textContent = content;
+                        
+                        mainContent.appendChild(iconSpan);
+                        mainContent.appendChild(contentSpan);
+                        container.appendChild(mainContent);
+                        
+                        // Add "Then" section
+                        const thenLabel = document.createElement('div');
+                        thenLabel.className = 'if-then-else-label';
+                        thenLabel.textContent = 'Maka:';
+                        container.appendChild(thenLabel);
+                        
+                        const thenContainer = document.createElement('div');
+                        thenContainer.className = 'if-then-else-container drop-zone';
+                        thenContainer.setAttribute('data-section', 'then');
+                        
+                        if (blockData.thenBlocks && blockData.thenBlocks.length > 0) {
+                            blockData.thenBlocks.forEach(thenBlock => {
+                                const thenBlockElement = createCodeBlockElement(thenBlock, index);
+                                thenContainer.appendChild(thenBlockElement);
+                            });
+                        }
+                        container.appendChild(thenContainer);
+                        
+                        // Add "Else" section
+                        const elseLabel = document.createElement('div');
+                        elseLabel.className = 'if-then-else-label';
+                        elseLabel.textContent = 'Jika tidak:';
+                        container.appendChild(elseLabel);
+                        
+                        const elseContainer = document.createElement('div');
+                        elseContainer.className = 'if-then-else-container drop-zone';
+                        elseContainer.setAttribute('data-section', 'else');
+                        
+                        if (blockData.elseBlocks && blockData.elseBlocks.length > 0) {
+                            blockData.elseBlocks.forEach(elseBlock => {
+                                const elseBlockElement = createCodeBlockElement(elseBlock, index);
+                                elseContainer.appendChild(elseBlockElement);
+                            });
+                        }
+                        container.appendChild(elseContainer);
+                        
+                        blockElement.appendChild(container);
+                        
+                        // Add delete button
+                        const deleteBtn = document.createElement('span');
+                        deleteBtn.className = 'delete-block';
+                        deleteBtn.innerHTML = '❌';
+                        deleteBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            // Remove block from character's code
+                            characterCodes[currentCharacterCode].blocks.splice(index, 1);
+                            updateCharacterCodeDisplay();
+                        });
+                        blockElement.appendChild(deleteBtn);
+                        
+                        return blockElement;
+                    default:
+                        content = blockData.type;
+                }
+                
+                // For non-if-then-else blocks
+                if (blockData.type !== 'if-then-else') {
+                    // Add icon
+                    const iconSpan = document.createElement('span');
+                    iconSpan.className = 'code-icon';
+                    iconSpan.textContent = icon;
+                    
+                    // Add content
+                    const contentSpan = document.createElement('span');
+                    contentSpan.textContent = content;
+                    
+                    blockElement.appendChild(iconSpan);
+                    blockElement.appendChild(contentSpan);
+                    
+                    // Add delete button
+                    const deleteBtn = document.createElement('span');
+                    deleteBtn.className = 'delete-block';
+                    deleteBtn.innerHTML = '❌';
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Remove block from character's code
+                        characterCodes[currentCharacterCode].blocks.splice(index, 1);
+                        updateCharacterCodeDisplay();
+                    });
+                    blockElement.appendChild(deleteBtn);
+                }
+                
+                return blockElement;
+            }
+            
+            // Make elements draggable
+            function makeDraggable(element) {
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    element.addEventListener('mousedown', function(e) {
+        if (e.target.classList.contains('delete-character')) return;
+        
+        isDragging = true;
+        
+        // Dapatkan posisi awal karakter dan mouse
+        const rect = element.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        
+        // Parse persentase posisi awal ke pixel
+        const playground = document.getElementById('playground');
+        const playgroundRect = playground.getBoundingClientRect();
+        
+        initialLeft = (parseFloat(element.style.left) / 100) * playgroundRect.width;
+        initialTop = (parseFloat(element.style.top) / 100) * playgroundRect.height;
+        
+        // Style saat didrag
+        element.style.cursor = 'grabbing';
+        element.style.zIndex = '100';
+        element.style.transition = 'none';
+        
+        e.preventDefault();
+        element.classList.add('dragging');
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        
+
+        if (!isDragging) return;
+    element.classList.remove('dragging');
+    element.style.transform = 'translate(-50%, -50%)';
+        
+        const playground = document.getElementById('playground');
+        const playgroundRect = playground.getBoundingClientRect();
+        
+        // Hitung pergerakan mouse
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        // Hitung posisi baru dalam pixel
+        let newX = initialLeft + dx;
+        let newY = initialTop + dy;
+        
+        // Batasi agar tidak keluar dari playground
+        newX = Math.max(0, Math.min(newX, playgroundRect.width - element.offsetWidth));
+        newY = Math.max(0, Math.min(newY, playgroundRect.height - element.offsetHeight));
+        
+        // Konversi ke persentase
+        const percentX = (newX / playgroundRect.width) * 100;
+        const percentY = (newY / playgroundRect.height) * 100;
+        
+        // Update posisi
+        element.style.left = percentX + '%';
+        element.style.top = percentY + '%';
+    });
+
+    document.addEventListener('mouseup', function() {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        element.style.cursor = 'grab';
+        element.style.zIndex = '10';
+        element.style.transition = 'all 0.3s';
+        
+        // Simpan posisi terakhir
+        saveCharacterPosition(element);
+    });
+
+    function saveCharacterPosition(el) {
+        characterInitialPositions[el.id] = {
+            left: el.style.left,
+            top: el.style.top
+        };
+    }
+}
+
+
+
+            
+            // Drag and drop for blocks
+            const blocks = document.querySelectorAll('.block');
+            const codeContainer = document.getElementById('codeContainer');
+            
+            blocks.forEach(block => {
+                block.addEventListener('dragstart', function(e) {
+                    draggedBlock = this;
+                    e.dataTransfer.setData('text/plain', this.getAttribute('data-type'));
+                });
+            });
+            
+            // Highlight drop zones when dragging over them
+            document.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+                
+                // Remove highlight from all drop zones
+                document.querySelectorAll('.drop-zone').forEach(zone => {
+                    zone.classList.remove('highlight');
+                });
+                
+                // Highlight the hovered drop zone
+                if (hoveredElement && hoveredElement.classList.contains('drop-zone')) {
+                    hoveredElement.classList.add('highlight');
+                }
+            });
+            
+            document.addEventListener('dragleave', function(e) {
+                // Remove highlight when leaving a drop zone
+                const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+                if (!hoveredElement || !hoveredElement.classList.contains('drop-zone')) {
+                    document.querySelectorAll('.drop-zone').forEach(zone => {
+                        zone.classList.remove('highlight');
+                    });
+                }
+            });
+            
+            document.addEventListener('drop', function(e) {
+                e.preventDefault();
+                
+                // Remove highlight from all drop zones
+                document.querySelectorAll('.drop-zone').forEach(zone => {
+                    zone.classList.remove('highlight');
+                });
+                
+                if (draggedBlock && currentCharacterCode) {
+                    const blockType = draggedBlock.getAttribute('data-type');
+                    const hoveredElement = document.elementFromPoint(e.clientX, e.clientY);
+                    
+                    // Check if we're dropping into a conditional block's drop zone
+                    if (hoveredElement && hoveredElement.classList.contains('drop-zone')) {
+                        const section = hoveredElement.getAttribute('data-section');
+                        
+                        // Find the parent if-then-else block
+                        let parentBlockElement = hoveredElement;
+                        while (parentBlockElement && !parentBlockElement.classList.contains('code-block')) {
+                            parentBlockElement = parentBlockElement.parentElement;
+                        }
+                        
+                        if (parentBlockElement) {
+                            const blockIndex = parseInt(parentBlockElement.getAttribute('data-index'));
+                            const ifThenElseBlock = characterCodes[currentCharacterCode].blocks[blockIndex];
+                            
+                            let blockData = { type: blockType };
+                            
+                            // Get additional data based on block type
+                            switch(blockType) {
+                                case 'naik':
+                                case 'turun':
+                                case 'kiri':
+                                case 'kanan':
+                                    blockData.steps = parseInt(draggedBlock.querySelector('.block-input').value);
+                                    break;
+                                case 'berputar':
+                                    blockData.degrees = parseInt(draggedBlock.querySelector('.block-input').value);
+                                    break;
+                                case 'suara':
+                                    blockData.sound = draggedBlock.querySelector('.block-select').value;
+                                    break;
+                                case 'bicara':
+                                    blockData.text = draggedBlock.querySelector('.block-input').value || "Halo!";
+                                    break;
+                            }
+                            
+                            // Add to the appropriate section of the if-then-else block
+                            if (section === 'then') {
+                                if (!ifThenElseBlock.thenBlocks) {
+                                    ifThenElseBlock.thenBlocks = [];
+                                }
+                                ifThenElseBlock.thenBlocks.push(blockData);
+                            } else {
+                                if (!ifThenElseBlock.elseBlocks) {
+                                    ifThenElseBlock.elseBlocks = [];
+                                }
+                                ifThenElseBlock.elseBlocks.push(blockData);
+                            }
+                        }
+                    } 
+                    // Check if we're dropping a new if-then-else block
+                    else if (blockType === 'if-then-else') {
+                        // Create a new if-then-else block
+                        const ifThenElseBlock = {
+                            type: 'if-then-else',
+                            thenBlocks: [],
+                            elseBlocks: []
+                        };
+                        
+                        characterCodes[currentCharacterCode].blocks.push(ifThenElseBlock);
+                    } 
+                    // Regular block drop
+                    else {
+                        let blockData = { type: blockType };
+                        
+                        // Get additional data based on block type
+                        switch(blockType) {
+                            case 'naik':
+                            case 'turun':
+                            case 'kiri':
+                            case 'kanan':
+                                blockData.steps = parseInt(draggedBlock.querySelector('.block-input').value);
+                                break;
+                            case 'berputar':
+                                blockData.degrees = parseInt(draggedBlock.querySelector('.block-input').value);
+                                break;
+                            case 'suara':
+                                blockData.sound = draggedBlock.querySelector('.block-select').value;
+                                break;
+                            case 'bicara':
+                                blockData.text = draggedBlock.querySelector('.block-input').value || "Halo!";
+                                break;
+                        }
+                        
+                        // Add to character's code
+                        characterCodes[currentCharacterCode].blocks.push(blockData);
+                    }
+                    
+                    // Update display
+                    updateCharacterCodeDisplay();
+                }
+            });
+            
+            // Play button - execute all characters' code
+            document.getElementById('playBtn').addEventListener('click', function() {
+                if (isPlaying) return;
+                
+                const playground = document.getElementById('playground');
+                const allCharacters = Array.from(playground.querySelectorAll('.character'));
+                
+                if (allCharacters.length === 0) {
+                    alert('Tidak ada karakter di area bermain!');
+                    return;
+                }
+                
+                isPlaying = true;
+                this.disabled = true;
+                
+                // Store initial positions before execution
+                allCharacters.forEach(char => {
+                    characterInitialPositions[char.id] = {
+                        top: char.style.top || '50%',
+                        left: char.style.left || '50%'
+                    };
+                });
+                
+                // Reset all characters' positions and styles
+                allCharacters.forEach(char => {
+                    char.style.transition = 'all 0.5s';
+                    char.style.transform = 'translate(-50%, -50%)';
+                    char.style.border = '';
+                    char.style.opacity = '1';
+                    char.style.width = '100px';
+                    char.style.height = '100px';
+                });
+                
+                // Remove all speech bubbles
+                document.querySelectorAll('.speech-bubble').forEach(bubble => {
+                    bubble.remove();
+                });
+                
+                // Execute code for each character
+                let completeCount = 0;
+                allCharacters.forEach(char => {
+                    if (characterCodes[char.id] && characterCodes[char.id].blocks.length > 0) {
+                        executeCharacterCode(char.id, () => {
+                            completeCount++;
+                            if (completeCount === allCharacters.length) {
+                                isPlaying = false;
+                                document.getElementById('playBtn').disabled = false;
+                            }
+                        });
+                    } else {
+                        completeCount++;
+                        if (completeCount === allCharacters.length) {
+                            isPlaying = false;
+                            document.getElementById('playBtn').disabled = false;
+                        }
+                    }
+                });
+            });
+            
+            // Update the executeCharacterCode function
+function executeCharacterCode(characterId, onComplete) {
+    const character = document.getElementById(characterId);
+    const code = characterCodes[characterId];
+    
+    if (!code || code.blocks.length === 0) {
+        if (onComplete) onComplete();
+        return;
+    }
+    
+    // Remove all highlights first
+    const codeContainer = document.getElementById('codeContainer');
+    const blockElements = codeContainer.querySelectorAll('.code-block');
+    blockElements.forEach(block => {
+        block.style.backgroundColor = '';
+    });
+    
+    let currentIndex = 0;
+    
+    function executeNextBlock() {
+        if (currentIndex >= code.blocks.length || !isPlaying) {
+            if (onComplete) onComplete();
+            return;
+        }
+        
+        const block = code.blocks[currentIndex];
+        highlightBlock(characterId, currentIndex, true);
+        
+        // Execute the current block
+        executeBlock(character, block, () => {
+            highlightBlock(characterId, currentIndex, false);
+            currentIndex++;
+            setTimeout(executeNextBlock, 300); // Reduced delay between blocks to 300ms
+        });
+    }
+    
+    executeNextBlock();
+}
+
+// Update the highlightBlock function
+function highlightBlock(characterId, blockIndex, isExecuting) {
+    const codeContainer = document.getElementById('codeContainer');
+    const blockElements = codeContainer.querySelectorAll('.code-block');
+    
+    // Find the block for this character and index
+    // Note: Skip the first (start) and last (end) blocks
+    if (blockIndex + 1 < blockElements.length - 1) {
+        const block = blockElements[blockIndex + 1];
+        if (isExecuting) {
+            block.style.backgroundColor = '#4CAF50'; // Green for executing
+            block.style.color = 'white';
+            block.style.transition = 'all 0.3s';
+        } else {
+            block.style.backgroundColor = '';
+            block.style.color = '';
+        }
+    }
+}
+
+// Update the executeBlock function to reduce delays
+function executeBlock(character, block, callback) {
+    const executionTime = 500; // Reduced execution time to 500ms
+    
+    switch(block.type) {
+        case 'naik':
+            const currentTop = parseInt(character.style.top) || 50;
+            character.style.top = (currentTop - (block.steps * 5)) + '%';
+            setTimeout(callback, executionTime);
+            break;
+        case 'turun':
+            const currentTop2 = parseInt(character.style.top) || 50;
+            character.style.top = (currentTop2 + (block.steps * 5)) + '%';
+            setTimeout(callback, executionTime);
+            break;
+        case 'kiri':
+            const currentLeft = parseInt(character.style.left) || 50;
+            character.style.left = (currentLeft - (block.steps * 5)) + '%';
+            setTimeout(callback, executionTime);
+            break;
+        case 'kanan':
+            const currentLeft2 = parseInt(character.style.left) || 50;
+            character.style.left = (currentLeft2 + (block.steps * 5)) + '%';
+            setTimeout(callback, executionTime);
+            break;
+        case 'berputar':
+            character.style.transform = 'translate(-50%, -50%) rotate(' + block.degrees + 'deg)';
+            setTimeout(callback, executionTime);
+            break;
+        case 'belok-kanan':
+            character.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+            setTimeout(callback, executionTime);
+            break;
+        case 'belok-kiri':
+            character.style.transform = 'translate(-50%, -50%) rotate(-90deg)';
+            setTimeout(callback, executionTime);
+            break;
+        case 'lompat':
+            character.style.transition = 'transform 0.3s';
+            character.style.transform = 'translate(-50%, -50%) translateY(-30px)';
+            setTimeout(() => {
+                character.style.transform = 'translate(-50%, -50%)';
+                setTimeout(callback, 400);
+            }, 300);
+            break;
+        case 'suara':
+            playSound(block.sound);
+            setTimeout(callback, executionTime);
+            break;
+        case 'bicara':
+            showSpeechBubble(character, block.text);
+            setTimeout(callback, executionTime);
+            break;
+        case 'besar':
+            character.style.width = '150px';
+            character.style.height = '150px';
+            setTimeout(callback, executionTime);
+            break;
+        case 'kecil':
+            character.style.width = '30px';
+            character.style.height = '30px';
+            setTimeout(callback, executionTime);
+            break;
+        case 'hilang':
+            character.style.opacity = '0';
+            setTimeout(callback, executionTime);
+            break;
+        case 'muncul':
+            character.style.opacity = '1';
+            setTimeout(callback, executionTime);
+            break;
+        case 'if-then-else':
+            const isMeeting = checkCharacterMeeting(character);
+            
+            if (isMeeting) {
+                if (block.thenBlocks && block.thenBlocks.length > 0) {
+                    executeBlockSequence(character, block.thenBlocks, callback);
+                } else {
+                    setTimeout(callback, executionTime);
+                }
+            } else {
+                if (block.elseBlocks && block.elseBlocks.length > 0) {
+                    executeBlockSequence(character, block.elseBlocks, callback);
+                } else {
+                    setTimeout(callback, executionTime);
+                }
+            }
+            break;
+        default:
+            setTimeout(callback, executionTime);
+    }
+}
+
+// Update the executeBlockSequence function
+function executeBlockSequence(character, blocks, finalCallback) {
+    let index = 0;
+    
+    function executeNextInSequence() {
+        if (index >= blocks.length || !isPlaying) {
+            finalCallback();
+            return;
+        }
+        
+        const block = blocks[index];
+        executeBlock(character, block, () => {
+            index++;
+            setTimeout(executeNextInSequence, 100); // Reduced delay between sequence blocks
+        });
+    }
+    
+    executeNextInSequence();
+}
+            
+            // Show speech bubble
+            function showSpeechBubble(character, text) {
+                // Remove existing bubble for this character
+                const existingBubble = document.querySelector(`.speech-bubble[data-char="${character.id}"]`);
+                if (existingBubble) {
+                    existingBubble.remove();
+                }
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'speech-bubble';
+                bubble.setAttribute('data-char', character.id);
+                bubble.textContent = text;
+                
+                // Position bubble above character
+                const charRect = character.getBoundingClientRect();
+                const playgroundRect = document.getElementById('playground').getBoundingClientRect();
+                
+                bubble.style.top = `${charRect.top - playgroundRect.top - 40}px`;
+                bubble.style.left = `${charRect.left - playgroundRect.left + (charRect.width / 2) - 60}px`;
+                
+                document.getElementById('playground').appendChild(bubble);
+                
+                // Remove bubble after 3 seconds
+                setTimeout(() => {
+                    bubble.remove();
+                }, 3000);
+            }
+            
+            // Highlight block during execution
+            function highlightBlock(characterId, blockIndex) {
+                const codeContainer = document.getElementById('codeContainer');
+                const blockElements = codeContainer.querySelectorAll('.code-block');
+                
+                // Find the block for this character and index
+                // Note: Skip the first (start) and last (end) blocks
+                if (blockIndex + 1 < blockElements.length - 1) {
+                    const block = blockElements[blockIndex + 1];
+                    block.style.backgroundColor = '#ffff99';
+                    setTimeout(() => {
+                        block.style.backgroundColor = '';
+                    }, 900);
+                }
+            }
+            
+            // Play sound
+            function playSound(soundType) {
+                if (sounds[soundType]) {
+                    audio.src = sounds[soundType];
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                }
+            }
+            
+            // Check if character is meeting another character
+            function checkCharacterMeeting(character) {
+                const playground = document.getElementById('playground');
+                const allCharacters = playground.querySelectorAll('.character');
+                
+                const charRect = character.getBoundingClientRect();
+                let isMeeting = false;
+                
+                allCharacters.forEach(otherChar => {
+                    if (otherChar !== character) {
+                        const otherRect = otherChar.getBoundingClientRect();
+                        
+                        // Simple collision detection
+                        if (!(charRect.right < otherRect.left || 
+                              charRect.left > otherRect.right || 
+                              charRect.bottom < otherRect.top || 
+                              charRect.top > otherRect.bottom)) {
+                            
+                            isMeeting = true;
+                            // Visual feedback
+                            character.style.border = '2px dashed red';
+                            otherChar.style.border = '2px dashed red';
+                            
+                            setTimeout(() => {
+                                character.style.border = 'none';
+                                otherChar.style.border = 'none';
+                            }, 1000);
+                            
+                            playSound('laugh');
+                        }
+                    }
+                });
+                
+                return isMeeting;
+            }
+            
+            // Stop button - reset characters to initial positions
+            document.getElementById('stopBtn').addEventListener('click', function() {
+                isPlaying = false;
+                document.getElementById('playBtn').disabled = false;
+                
+                const playground = document.getElementById('playground');
+                const allCharacters = Array.from(playground.querySelectorAll('.character'));
+                
+                // Reset all characters to their initial positions
+                allCharacters.forEach(char => {
+                    const initialPos = characterInitialPositions[char.id];
+                    if (initialPos) {
+                        char.style.transition = 'all 0.5s';
+                        char.style.top = initialPos.top;
+                        char.style.left = initialPos.left;
+                        char.style.transform = 'translate(-50%, -50%)';
+                        char.style.border = '';
+                        char.style.opacity = '1';
+                        char.style.width = '100px';
+                        char.style.height = '100px';
+                    } else {
+                        // If no initial position, center the character
+                        char.style.transition = 'all 0.5s';
+                        char.style.top = '50%';
+                        char.style.left = '50%';
+                        char.style.transform = 'translate(-50%, -50%)';
+                        char.style.border = '';
+                        char.style.opacity = '1';
+                        char.style.width = '100px';
+                        char.style.height = '100px';
+                    }
+                });
+                
+                // Remove all speech bubbles
+                document.querySelectorAll('.speech-bubble').forEach(bubble => {
+                    bubble.remove();
+                });
+            });
+            
+            // Clear button
+            document.getElementById('clearBtn').addEventListener('click', function() {
+                 {
+                    Object.keys(characterCodes).forEach(charId => {
+                        characterCodes[charId].blocks = [];
+                    });
+                    updateCharacterCodeDisplay();
+                }
+            });
+            
+            // Background selector
+            document.getElementById('backgroundSelect').addEventListener('change', function() {
+                changeBackground(this.value);
+                localStorage.setItem('selectedBackground', this.value);
+            });
+            
+            function changeBackground(bgId) {
+                const playground = document.getElementById('playground');
+                playground.style.backgroundImage = `url('${backgrounds[bgId]}')`;
+            }
+            
+            // Initialize character selection
+            document.querySelectorAll('.character-option').forEach(option => {
+                option.addEventListener('click', selectCharacter);
+            });
+            
+            // Initialize the app
+            initApp();
+
+            
+        });
+
+
+
+
+
+        // Fullscreen functionality
+document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+        document.getElementById('fullscreenBtn').innerHTML = '<span>⛶</span> Exit Fullscreen';
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+            document.getElementById('fullscreenBtn').innerHTML = '<span>⛶</span> Fullscreen';
+        }
+    }
+}
+
+// Listen for fullscreen change to update button text
+document.addEventListener('fullscreenchange', function() {
+    const fsButton = document.getElementById('fullscreenBtn');
+    if (document.fullscreenElement) {
+        fsButton.innerHTML = '<span>⛶</span> Exit Fullscreen';
+    } else {
+        fsButton.innerHTML = '<span>⛶</span> Fullscreen';
+    }
+});
+
+
+let scale = 1;
+element.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    scale += e.deltaY * -0.01;
+    scale = Math.min(Math.max(0.5, scale), 2); // Batasi antara 0.5x sampai 2x
+    element.style.transform = `translate(-50%, -50%) scale(${scale})`;
+});
+
+
+let rotation = 0;
+element.addEventListener('dblclick', function() {
+    rotation += 90;
+    element.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+});
+
+
+const gridSize = 20; // px
+newX = Math.round(newX / gridSize) * gridSize;
+newY = Math.round(newY / gridSize) * gridSize;
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
